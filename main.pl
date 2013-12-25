@@ -6,25 +6,16 @@ use local::lib;
 use Data::Dumper;
 #use Bio::PDB::Structure;
 use Getopt::Std;
+use PSS::Dihed;
 
 my %opts = ();
+my $dihed = PSS::Dihed->new();
 getopt("f:",\%opts);
 
 if (defined $opts{f} && $opts{f} ne '') {
-	my @result = system("dihed.pl -list phi,psi,omega,chi1 $opts{f}");
-	foreach my $e (@result){
-		print "$e";
-	}
+	my @result = `dihed.pl -list phi,psi,omega,chi1 $opts{f}`;
+	$dihed->stream_in(\@result);
+	print Dumper($dihed->getMol());
 } else {
 	print "Log> Unknow PDB File\n";
-}
-
-#LEU347:A  -89.137  118.124 -179.582 -178.111
-#
-sub torsion {
-	my ($string) = @_;
-	my @ar = split(' ',$string);
-	for(my $i = 0; $i <= $#ar; $i++) {
-		print "$i> $ar[$i]\n";
-	}
 }
